@@ -5,13 +5,10 @@ import { Range } from "./Range.jsx";
 
 // Déclaration et exportation du composant SearchBar
 // Props :
-// - query : texte de recherche
-// - onQueryChange : callback déclenché quand la recherche change
-// - inStockOnly : booléen pour afficher uniquement les produits en stock
-// - onInStockOnlyChange : callback déclenché quand la case stock change
-// - maxPrice : prix maximum sélectionné via le slider
-// - onMaxPriceChange : callback déclenché quand le prix max change
-// - rangeMax : borne maximale du slider
+// - query, onQueryChange
+// - inStockOnly, onInStockOnlyChange
+// - maxPrice, onMaxPriceChange, rangeMax
+// - category, onCategoryChange, categories (NOUVEAU)
 export function SearchBar({
   query,
   onQueryChange,
@@ -20,31 +17,50 @@ export function SearchBar({
   maxPrice,
   onMaxPriceChange,
   rangeMax,
+  category,
+  onCategoryChange,
+  categories = [],
 }) {
   return (
-    <div>
-      {/* Case à cocher : filtre pour afficher seulement les produits en stock */}
-      <Checkbox
-        id="display-stock" // identifiant unique de la case
-        Checked={inStockOnly} // état booléen
-        LabelText="Afficher seulement les produits en stock" // texte du label
-        onChange={onInStockOnlyChange} // callback de changement
-      />
-
+    <div style={{ display: "grid", gap: 12 }}>
       {/* Champ texte : barre de recherche */}
       <Input
-        value={query} // valeur contrôlée (texte actuel)
-        onChange={onQueryChange} // callback au changement de texte
-        placeholder="Rechercher..." // texte indicatif
+        value={query}
+        onChange={onQueryChange}
+        placeholder="Rechercher..."
+      />
+
+      {/* Combo box : filtre par catégorie */}
+      <div style={{ display: "grid", gap: 6 }}>
+        <label htmlFor="category-select" style={{ fontSize: 12 }}>Catégorie</label>
+        <select
+          id="category-select"
+          value={category}
+          onChange={(e) => onCategoryChange(e.target.value)}
+          style={{ padding: "8px 10px", width: "100%" }}
+        >
+          <option value="ALL">Toutes les catégories</option>
+          {categories.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Case à cocher : seulement en stock */}
+      <Checkbox
+        id="display-stock"
+        Checked={inStockOnly}
+        LabelText="Afficher seulement les produits en stock"
+        onChange={onInStockOnlyChange}
       />
 
       {/* Slider : filtre par prix maximum */}
       <Range
-        min={0} // borne minimale
-        max={rangeMax} // borne maximale (dynamique selon produits)
-        value={maxPrice} // valeur actuelle du slider
-        label="Prix max" // texte affiché au-dessus du slider
-        onChange={onMaxPriceChange} // callback de changement
+        min={0}
+        max={rangeMax}
+        value={maxPrice}
+        label="Prix max"
+        onChange={onMaxPriceChange}
       />
     </div>
   );
